@@ -1,0 +1,86 @@
+
+@{
+    ViewBag.Title = "Chat";
+    Layout = "~/Views/Shared/_LayoutPage2.cshtml";
+    WebUser user = Session["User"] as WebUser;
+    WebUserBLL _users = new WebUserBLL();
+    MessageBLL _message = new MessageBLL();
+    List<Message> messages = _message.GetAll(x => x.Receiver_Id == user.Id || x.WebUser_Id == user.Id);
+}
+
+
+
+<section class="messages-page">
+    <div class="container">
+        <div class="messages-sec">
+            <div class="row">
+
+                <div class="col-lg-4 col-md-12 no-pdd">
+                    <div class="msgs-list">
+                        <div class="msg-title">
+                            <h3>Messages</h3>
+                            <ul>
+                                <li><a href="#" title=""><i class="fa fa-cog"></i></a></li>
+                                <li><a href="#" title=""><i class="fa fa-ellipsis-v"></i></a></li>
+                            </ul>
+                        </div>
+                        <div class="messages-list">
+                            <ul>
+                                @foreach (var item in mesajlar.GroupBy(x => x.Receiver_Id))
+                                {
+                                    WebUser sender = _users.GetById(item.Key);
+
+                                    if (sender.Id == user.Id)
+                                    { continue; }
+                                    <li id="user-@sender.UserName" onclick="getUserMessages('@sender.UserName');">
+                                        <div class="usr-msg-details">
+                                            <div class="usr-ms-img">
+                                                <img src="~/Content/images/WebUsersPP/@sender.Avatar" alt="">
+                                            </div>
+
+                                            <div class="usr-mg-info">
+                                                <h3>@sender.UserName</h3>
+                                            </div>
+                                            <span class="posted_time" id="posted_time-@sender.UserName">@(sender.Status == true ? "Online" : "Offline")</span>
+                                        </div>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-8 col-md-12 pd-right-none pd-left-none">
+                    <div class="main-conversation-box">
+
+                        <div class="message-bar-head">
+                            <div class="usr-msg-details">
+                                <div class="usr-ms-img">
+                                    <img id="sender-img" src="~/Content/images/WebUsersPP/chat.png" alt="">
+                                </div>
+                                <div class="usr-mg-info">
+                                    <h3 id="sender-username"></h3>
+                                    <p id="sender-status"></p>
+                                </div>
+                            </div>
+                            <a href="#" title=""><i class="fa fa-ellipsis-v"></i></a>
+                        </div>
+
+                        <div class="messages-line"></div>
+
+                        <div class="message-send-area">
+                            <div class="message-forum">
+                                <div class="mf-field">
+                                    <input id="messageInput" type="text" name="message" placeholder="Type a message here">
+                                    <button id="sendMessageButton" type="button">Send</button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
